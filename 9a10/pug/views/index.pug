@@ -1,0 +1,15 @@
+html 
+    include include/head.pug
+    body
+        if isLogged
+            h1 Bienvenido!
+            h2=nombre
+            if usuarios 
+                h1 Usuarios: 
+                ul
+                    each valor in usuarios
+                        li
+                            b=valor
+            a(href='https://google.com/') ve a google
+            input(type='text' value='hola mundo' id='soy-input' name='input')
+            include include/footer.pug
