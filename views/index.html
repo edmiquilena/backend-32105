@@ -45,7 +45,7 @@
                 </div>
               </div>
               <div class="chat-history">
-                <ul class="m-b-0">
+                <ul class="m-b-0" id="mensajes">
                   <li class="clearfix">
                     <div class="message-data">
                       <span class="message-data-time">[NOMBRE]</span>
@@ -54,17 +54,25 @@
                   </li>
                 </ul>
               </div>
-              <form>
+              <form onsubmit="return enviarMensaje(this)">
                 <div class="chat-message clearfix">
                   <div class="input-group mb-0">
                     <div class="input-group-append">
                       <input
+                        id="nombre"
+                        type="text"
+                        class="form-control"
+                        placeholder="Nombre"
+                      />
+                      <input
+                        id="chat_mensaje"
                         type="text"
                         class="form-control"
                         placeholder="Mensaje..."
                       />
                     </div>
                     <input
+                      id="enviar_msj"
                       type="submit"
                       class="form-control"
                       placeholder="Enviar mensaje"
@@ -77,6 +85,7 @@
         </div>
       </div>
     </div>
+    <script src="socket.io/socket.io.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
