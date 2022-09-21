@@ -4,7 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel ./origen.js -o ./output.js",
+    "build:color": "babel ./color.js -o ./color-out.js",
+    "start:watch": "babel ./origen.js -o ./output.js -w",
+    "build:ts": "tsc"
   },
   "repository": {
     "type": "git",
@@ -18,7 +22,9 @@
   },
   "homepage": "https://github.com/edmiquilena/backend-32105#readme",
   "dependencies": {
-    "express": "^4.18.1",
-    "socket.io": "^4.5.2"
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
+    "express": "^4.18.1"
   }
 }
