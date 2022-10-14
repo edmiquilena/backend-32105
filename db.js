@@ -9,3 +9,11 @@ const connection = {
 };
 
 export default connection;
+
+class Container {
+  constructor(config) {
+    this.Knex = knex(config);
+  }
+
+  crearTabla() {}
+}

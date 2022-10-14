@@ -42,6 +42,7 @@ Knex("articulos")
 
 Knex.from("articulos")
   .select("*")
+  .where()
   .then((rows) => console.table(rows));
 
 Knex.from("articulos")

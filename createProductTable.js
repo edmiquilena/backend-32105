@@ -2,6 +2,8 @@ import knex from "knex";
 import connection from "./db.js";
 const Knex = knex(connection);
 
+Knex.schema.createTableIfNotExists;
+
 Knex.schema
   .createTable("articulos", (tabla) => {
     // * nombre varchar 15 not null, codigo 10, precio float, sotck entero, id
