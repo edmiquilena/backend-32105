@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/edmiquilena/backend-32105#readme",
   "dependencies": {
+    "firebase-admin": "^11.2.0",
     "mongoose": "^6.6.6"
   }
 }

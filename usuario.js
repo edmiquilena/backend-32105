@@ -6,8 +6,6 @@ const usuarioSchema = new mongoose.Schema({
   // * nombre: String
   nombre: { type: String, required: true },
   apellido: { type: String, required: false },
-  edad: { type: Number, required: true },
-  esEstudiante: { type: Boolean, default: true },
   dni: { type: String, required: true, unique: true },
 });
 

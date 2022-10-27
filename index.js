@@ -4,9 +4,12 @@ import Estudiante from "./estudiantes.js";
 (async () => {
   // * Conectarnos a la base de datos
   try {
-    await mongoose.connect("mongodb://127.0.0.1:27017/coder", {
-      serverSelectionTimeoutMS: 4000,
-    });
+    await mongoose.connect(
+      "mongodb+srv://edcoder:coder123@edtestnet.snbg1.mongodb.net/ecommerce?retryWrites=true&w=majority",
+      {
+        serverSelectionTimeoutMS: 4000,
+      }
+    );
     console.log("conectado a la base!");
   } catch (e) {
     console.error(`error en conexion`, e);
@@ -16,13 +19,11 @@ import Estudiante from "./estudiantes.js";
 
   // ? 1: clase
   const usuario = new Usuario({
-    nombre: "Eduardo",
-    apellido: "m",
-    edad: 23,
-    esEstudiante: true,
+    nombre: "Federico",
+    apellido: "Perez",
     dni: "10000000",
   });
-  //  await usuario.save();
+  await usuario.save();
 
   // ? 2: create
   // Usuario.insertMany([{},{}])
