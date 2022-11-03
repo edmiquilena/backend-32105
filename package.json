@@ -19,11 +19,7 @@
   },
   "homepage": "https://github.com/edmiquilena/backend-32105#readme",
   "dependencies": {
-    "@faker-js/faker": "^7.6.0",
-    "@types/jest": "^29.2.1",
-    "express": "^4.18.2",
-    "firebase-admin": "^11.2.0",
-    "mongoose": "^6.6.6"
+    "normalizr": "^3.6.1"
   },
   "devDependencies": {
     "jest": "^29.2.2"
