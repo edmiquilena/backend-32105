@@ -1,27 +1,45 @@
-import { application } from "express";
-import daos from "./daos/index.js";
+import express from "express";
+import cookieParser from "cookie-parser";
 
-(async () => {
-  const { trainerDAO, pokemonDAO } = await daos();
-  await pokemonDAO.save({
-    name: "Bulbasaur",
-    dex: 1,
-    types: ["Grass", "Poison"],
+const expressApp = express();
+//* secreto / llave privada
+//* array con strings, string
+expressApp.use(cookieParser("qw0d3wj9032j09322390"));
+
+expressApp.use((req, res, next) => {
+  // * cookies normales
+  console.log(req.cookies);
+  // * cookies firmadas
+  console.log(req.signedCookies);
+  next();
+});
+
+expressApp.get("/", (req, res) => {
+  // * Cookie: coder=house; token=xxxxxxxx
+  // {coder: 'houser', token: ''}
+  //  req.headers.cookie
+  res.send({
+    logged: "jwt" in req.cookies ? true : false,
+    cookies: req.cookies,
+    signed: req.signedCookies,
   });
-  console.log(await pokemonDAO.findAll());
-  //  console.log(await pokemonMongo.findByName("Bulbasaur"));
-  //console.log(await trainerMongo.findById("635c56101795f3da84d46c51"));
-})();
+});
 
-app.put("/trainer/:id", async (req, res) => {
-  const { id } = req.params;
-  const body = req.body;
-  await pokemonDAO.update(body);
-  // {
-  //     _id: new ObjectId("635c5fce4fb67fb7ebfc0c17"),
-  //     name: 'Piplup',
-  //     dex: 1,
-  //     types: [ 'Grass', 'Poison' ],
-  //     __v: 0
-  //   }
+expressApp.get("/cookie", (req, res) => {
+  // * proviene de express
+  // ? s%3Aejjewoij2309u32.23423wqewqewqqewwqe.73QsNSg4FgFZv1Bynaw7n%2BS8XFCQJqIzoChHNaPW9sw
+  res.cookie("jwt", "ejjewoij2309u32.23423wqewqewqqewwqe", { signed: true });
+  res.cookie("recordar", "true", {});
+  res.cookie("config", { color: "rojo", modo: "oscuro" });
+  res.send("set!");
+});
+
+expressApp.get("/logout", (req, res) => {
+  // * proviene de express
+  res.clearCookie("jwt");
+  res.send(req.cookies);
+});
+
+expressApp.listen(8081, () => {
+  console.log("conectado!");
 });
