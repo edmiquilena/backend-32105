@@ -22,6 +22,13 @@ const adminAuth = (req, res, next) => {
   }
 };
 app.get("/", (req, res) => {
+  if (req.session.user) {
+    // mensaje de bienvenida con usuario
+    // muestra vista de agregar productos
+  } else {
+    // muestra form login
+  }
+
   res.send({
     sessionID: req.sessionID,
     sessionStore: req.sessionStore,
