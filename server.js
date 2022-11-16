@@ -1,98 +1,104 @@
 import express from "express";
 import session from "express-session";
-import bodyParser from "body-parser";
-import MongoStore from "connect-mongo";
-import DAOUsuarios from "./daos/UsuariosDAO.js";
+import passport from "passport";
+import { Strategy } from "passport-local";
+import { DBConnect, Users } from "./controller.js";
+import bcrypt from "bcrypt";
 const app = express();
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(bodyParser.urlencoded({ extended: false }));
-const MongoUsers = new DAOUsuarios();
-const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
+// signup
+passport.use(
+  "signup",
+  new Strategy({ passReqToCallback: true }, (req, username, password, done) => {
+    console.log(username, password);
 
-app.use(
-  session({
-    secret: "2332ee32e3232ee32",
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: "mongodb://127.0.0.1:27017/sesiones",
-      mongoOptions,
-    }),
+    const { email } = req.body;
+    Users.findOne({ username }, (err, user) => {
+      console.log(user);
+      console.log(err);
+      if (user) return done(null, false);
+
+      Users.create(
+        { username, password: hasPassword(password), email },
+        (err, user) => {
+          if (err) return done(err);
+          //null    // obj // truthy
+          return done(null, user);
+        }
+      );
+    });
   })
 );
-app.use(express.static("public"));
 
-//
+passport.use(
+  "login",
+  new Strategy({}, (username, password, done) => {
+    Users.findOne({ username }, (err, user) => {
+      if (err) return done(err);
+      if (!user) return done(null, false);
+      if (!validatePass(password, user.password)) return done(null, false);
+      return done(null, user);
+    });
+  })
+);
 
-const { pathname: root } = new URL(".", import.meta.url);
-
-const authMod = (req, res, next) => {
-  req.session.rank >= 1
-    ? next()
-    : res.status(401).send({ rango: req.session.rank, error: "Sin permisos" });
+const hasPassword = (pass) => {
+  // ocultar
+  return bcrypt.hashSync(pass, bcrypt.genSaltSync(10), null);
 };
-const authAdmin = (req, res, next) => {
-  req.session.rank >= 2
-    ? next()
-    : res.status(401).send({ rango: req.session.rank, error: "Sin permisos" });
+const validatePass = (pass, hashedPass) => {
+  // validar
+  return bcrypt.compareSync(pass, hashedPass);
+};
+passport.serializeUser((userObj, done) => {
+  done(null, userObj._id);
+});
+
+passport.deserializeUser((id, done) => {
+  Users.findById(id, done);
+});
+app.use(
+  session({
+    secret: "holamundo",
+    cookie: {
+      maxAge: 60000,
+    },
+    saveUninitialized: false,
+    resave: true,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// login -> signin
+
+// /login -> password
+
+const authMw = (req, res, next) => {
+  req.isAuthenticated() ? next() : res.send({ error: false });
 };
 
-app.get("/admin", authAdmin, (req, res) => {
-  res.send("Hola admin!");
-});
-app.get("/mod", authMod, (req, res) => {
-  res.send("Hola mod!");
-});
-// ROOT
-app.get("/", (req, res) => {
-  // * si existe sesion mostrar mensaje
-  // * login:
-
-  if (req.session.usuario) {
-    res.sendFile(root + "public/dashboard.html");
-  } else {
-    if (req.query.error) {
-      res.sendFile(root + "public/error.html");
-    } else {
-      res.sendFile(root + "public/login.html");
-    }
+app.post(
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/error" }),
+  (req, res) => {
+    res.send({ error: false });
+    // res.redirect('/home')
   }
-});
+);
 
-// * login
-// * leer la base de datos
-// * session
-app.post("/", async (req, res) => {
-  // * usuario
-  // * rango [admin, mod]
-  try {
-    const { username, password } = req.body;
-    const usuario = await MongoUsers.listar(username, password);
-    console.log(usuario);
-    req.session.rank = usuario.rank;
-    req.session.usuario = username;
-    res.redirect("/");
-  } catch (e) {
-    res.redirect("/?error=true");
+app.post(
+  "/signup",
+  passport.authenticate("signup", { failureRedirect: "/error" }),
+  (req, res) => {
+    res.send({ error: false });
   }
+);
+
+app.get("/datos", authMw, (req, res) => {
+  res.send({ hola: "mundo", data: req.user });
 });
 
-// * registro
-// * crear usuario
-// * session
-app.post("/register", async (req, res) => {
-  const { username, password } = req.body;
-  await MongoUsers.guardar({ username, password });
-  req.session.usuario = username;
-  req.session.rank = 0;
-  res.redirect("/");
+DBConnect(() => {
+  app.listen(8080, () => console.log("conectados!"));
 });
-
-app.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    res.redirect("/");
-  });
-});
-
-app.listen(8081, () => console.log("conectados"));
