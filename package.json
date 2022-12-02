@@ -1,6 +1,7 @@
 {
   "name": "backend-32105",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "dependencies": {
@@ -25,7 +26,10 @@
     "yargs": "^17.6.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node desafio1.js"
+
+
   },
   "repository": {
     "type": "git",

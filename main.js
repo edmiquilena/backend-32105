@@ -1,15 +1,22 @@
-const child_process = require("child_process");
-// .sh
-// console.log("hola 1");
+import cluster from "cluster";
+import { cpus } from "os";
+import express from "express";
 
-// child_process.exec("ls", (error, stdout, stderr) => {
-//   console.log(stdout);
-// });
-// console.log("hola");
+const app = express();
+const cpu = cpus();
 
-const child = child_process.spawn("find", ["."]);
+if (cluster.isPrimary) {
+  // * primario
+  console.log(`Primary: ${process.pid}`);
+  for (let i = 0; i < cpu.length; i++) {
+    cluster.fork();
+  }
 
-child.stdout.on("data", (data) => console.log(`data: ${data}`));
+  cluster.on("exit", (worker, code, signal) => {
+    console.log(`Worker with id ${worker.process.pid} killed`);
+  });
+} else {
+  // * insert worker code here
 
-child.stderr.on("data", (data) => console.error(data));
-child.on("close", (code) => console.log(`salida con codigo ${code}`));
+  console.log(`Worker with id ${process.pid}`);
+}
