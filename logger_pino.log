@@ -1,0 +1,2 @@
+{"level":30,"time":1671142395934,"pid":54587,"hostname":"192.168.0.103","msg":"hola del padre"}
+{"level":50,"time":1671142395934,"pid":54587,"hostname":"192.168.0.103","method":"db","hola":"mundo","msg":"llamada a la base de datos"}
