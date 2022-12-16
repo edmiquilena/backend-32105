@@ -3,10 +3,31 @@ import session from "express-session";
 import bodyParser from "body-parser";
 import MongoStore from "connect-mongo";
 import DAOUsuarios from "./daos/UsuariosDAO.js";
+import parseArgs from "minimist";
+import logger from "./logger.js";
+// import compression from "compression";
 const app = express();
+const options = {
+  default: {
+    port: 8080,
+  },
+  alias: {
+    p: "port",
+  },
+};
+const args = parseArgs(process.argv.slice(2), options);
+const { port: PORT } = args;
+
+// * logger
+
+app.use((req, res, next) => {
+  logger.info(`Request ${req.method} at ${req.url}`);
+  next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
+
 const MongoUsers = new DAOUsuarios();
 const mongoOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
@@ -94,5 +115,33 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
   });
 });
+app.get("/primes", (req, res) => {
+  const primes = [];
+  const max = Number(req.query.max) || 1000;
+  for (let i = 1; i < max; i++) {
+    if (isPrime(i)) primes.push(i);
+  }
+  res.json(primes);
+});
+app.all("*", (req, res) => {
+  logger.warn(`Failed Request ${req.method} at ${req.url}`);
+  res.send({ error: true }).status(500);
+});
+app.listen(PORT, () =>
+  logger.info(`Servidor escuchando en el puerto ${PORT}.`)
+);
 
-app.listen(8081, () => console.log("conectados"));
+function isPrime(num) {
+  if ([2, 3].includes(num)) return true;
+  else if ([2, 3].some((n) => num % n == 0)) return false;
+  else {
+    let i = 5,
+      w = 2;
+    while (i ** 2 <= num) {
+      if (num % i == 0) return false;
+      i += w;
+      w = 6 - w;
+    }
+  }
+  return true;
+}

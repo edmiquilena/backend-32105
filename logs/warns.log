@@ -1,0 +1,8 @@
+[2022-12-16T18:39:15.729] [WARN] default - Failed Request GET at /login
+[2022-12-16T18:39:57.763] [WARN] default - Failed Request GET at /login
+[2022-12-16T18:40:10.288] [WARN] default - Failed Request POST at /login
+[2022-12-16T18:44:17.228] [WARN] default - Failed Request GET at /assets/images/icons.svg
+[2022-12-16T18:44:23.722] [WARN] default - Failed Request GET at /assets/images/icons.svg
+[2022-12-16T18:44:24.054] [WARN] default - Failed Request GET at /assets/images/icons.svg
+[2022-12-16T18:44:24.294] [WARN] default - Failed Request GET at /assets/images/icons.svg
+[2022-12-16T18:44:24.465] [WARN] default - Failed Request GET at /assets/images/icons.svg
