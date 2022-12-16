@@ -1,0 +1,5 @@
+artillery quick \
+    --count 50 \
+    --num 40 \
+    http://localhost:8080/?max=1000000  \
+    --output fork.txt

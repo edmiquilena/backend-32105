@@ -5,6 +5,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "autocannon": "^7.10.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "compression": "^1.7.4",
@@ -30,8 +31,8 @@
     "yargs": "^17.6.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node desafio1.js"
+    "start": "0x profiler.js",
+    "test": "node benchmark.js"
   },
   "repository": {
     "type": "git",
