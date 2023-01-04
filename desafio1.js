@@ -1,42 +1,31 @@
-import express from "express";
-import cookieParser from "cookie-parser";
-const app = express();
-// * POST -> obj cookie
-// * GET -> ver cookies
-// * DELETE -> eliminar ()
-
-app.use(cookieParser());
-app.use(express.json());
-
-app.get("/cookies", (req, res) => {
-  res.send({ result: true, ...req.cookies });
-});
-
-// * POST -> obj cookie
-
-app.post("/cookies", (req, res) => {
-  // * s
-  const { nombre, valor, tiempo } = req.body;
-  if (!nombre || !valor) return res.send({ error: true });
-  res.cookie(nombre, valor, {
-    maxAge: !tiempo ? undefined : 1000 * parseInt(tiempo),
+import { createTransport } from "nodemailer";
+async function run({ subject, html, email }) {
+  const transporter = createTransport({
+    host: "smtp.ethereal.email",
+    port: 587,
+    auth: {
+      user: "santiago55@ethereal.email",
+      pass: "23RHg2YhjH9uhtQ9xA",
+    },
   });
-  res.send({
-    error: false,
-    msg: `cookie ${nombre} con valor ${valor} creada.`,
-  });
-});
 
-// * DELETE -> eliminar ()
-app.delete("/cookies/:nombre", (req, res) => {
-  const { nombre } = req.params;
-  if (!nombre) return res.send({ error: true });
+  const opts = {
+    from: "santiago55@ethereal.email",
+    to: email,
+    subject,
+    html,
+  };
+  try {
+    return transporter.sendMail(opts);
+  } catch (e) {
+    throw Error(e);
+  }
+}
+const params = process.argv;
+const subject = params[2] || "Titulo";
+const html = params[3] || "html";
+const email = "vince50@ethereal.email";
 
-  res
-    .clearCookie(nombre)
-    .send({ error: false, msg: `cookie ${nombre} eliminada` });
-});
-
-app.listen(8081, () => {
-  console.log("conectado!");
-});
+const info = await run({ subject, html, email });
+console.log(info);
+// node desafio.js "enviar correo" "contenido html"
